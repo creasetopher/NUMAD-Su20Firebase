@@ -80,43 +80,13 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-
-//                if (loginFormState.getUsernameError() != null) {
-//                    usernameEditText.setError(getString(loginFormState.getUsernameError()));
-//                }
-//                if (loginFormState.getPasswordError() != null) {
-//                    passwordEditText.setError(getString(loginFormState.getPasswordError()));
-//                }
             }
         });
 
-//        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-//            @Override
-//            public void onChanged(@Nullable LoginResult loginResult) {
-//                if (loginResult == null) {
-//                    return;
-//                }
-//                loadingProgressBar.setVisibility(View.GONE);
-//                if (loginResult.getError() != null) {
-//                    showLoginFailed(loginResult.getError());
-//                }
-//                if (loginResult.getSuccess() != null) {
-//                    updateUiWithUser(loginResult.getSuccess());
-//                }
-//                setResult(Activity.RESULT_OK);
 //
-//                //Complete and destroy login activity once successful
-//                finish();
-//            }
-//        });
 
         editor =  getSharedPreferences("LoginAct", MODE_PRIVATE).edit();
-//        FragmentManager fm = getSupportFragmentManager();
-//        fm.beginTransaction().add(new LoginFragment(), "frag");
-//
-//
-//        Log.v("fragmgr", Boolean.toString(fm != null));
-//        Log.v("frag", Boolean.toString(fm.findFragmentByTag("frag") != null));
+
 
 
 
@@ -140,18 +110,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
         usernameEditText.addTextChangedListener(afterTextChangedListener);
-//        passwordEditText.addTextChangedListener(afterTextChangedListener);
-//        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    loginViewModel.login(usernameEditText.getText().toString(),
-//                            passwordEditText.getText().toString());
-//                }
-//                return false;
-//            }
-//        });
 
         this.actionCodeSettings =
                 ActionCodeSettings.newBuilder()
@@ -284,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
 //                    this.userEmail = (String) savedInstanceState.getCharSequence("userEmail");
 
 
-                    // The client SDK will parse the code from the link for you.
+
                     auth.signInWithEmailLink(userEmail, emailLink)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -293,18 +251,14 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show();
 
                                         AuthResult result = task.getResult();
-                                        // You can access the new user via result.getUser()
-                                        // Additional user info profile *not* available via:
-                                        // result.getAdditionalUserInfo().getProfile() == null
-                                        // You can check if the user is new or existing:
-                                        // result.getAdditionalUserInfo().isNewUser()
-//                                        final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_logged_in);
-//
-//                                        NavHostFragment.findNavController(frag)
-//                                                .navigate(R.id.action_nav_host_fragment_to_fragment_logged_in);
 
-                                        Intent i = new Intent(LoginActivity.this, LoggedInActivity.class);
-                                        startActivity(i);
+                                        User user = new User(userEmail);
+
+                                        Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
+                                        intent.putExtra("authResult", result);
+                                        intent.putExtra("userEmail", user.getEmail());
+
+                                        startActivity(intent);
 
                                     } else {
                                         task.getException().printStackTrace();

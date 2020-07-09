@@ -25,8 +25,9 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-firestore:21.4.0'
     implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.7'
-    implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
     implementation 'com.google.firebase:firebase-auth:19.3.1'
     implementation 'androidx.navigation:navigation-fragment:2.0.0'
     implementation 'androidx.navigation:navigation-ui:2.0.0'
