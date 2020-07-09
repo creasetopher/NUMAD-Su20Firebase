@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1024687043347",
+    "firebase_url": "https://chrissims-madsu20.firebaseio.com",
+    "project_id": "chrissims-madsu20",
+    "storage_bucket": "chrissims-madsu20.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024687043347:android:0ecdc7573b4559756de0e6",
+        "android_client_info": {
+          "package_name": "com.example.emojo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1024687043347-gdbv6dv2n7u01uf3p862hsqeh7hehvu5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqitS9JZCth08nenkUutDpXQyrxCovKFs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1024687043347-gdbv6dv2n7u01uf3p862hsqeh7hehvu5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_host_fragment">
+
+
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="com.example.emojo.ui.login.LoginActivity"
+        android:label="login label"
+        tools:layout="@layout/activity_login"
+        >
+
+        <action
+            android:id="@+id/action_nav_host_fragment_to_fragment_logged_in"
+            app:destination="@id/fragment_logged_in" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/fragment_logged_in"
+        android:name="com.example.emojo.ui.login.LoggedInFragment"
+        android:label="logged in label"
+        tools:layout="@layout/fragment_logged_in">
+    </fragment>
+
+
+</navigation>
+
