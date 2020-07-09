@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.emojo.R;
+import com.example.emojo.data.model.User;
 import com.example.emojo.ui.login.LoginViewModel;
 import com.example.emojo.ui.login.LoginViewModelFactory;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,6 +45,13 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private ActionCodeSettings actionCodeSettings;
     private String userEmail;
+    private User userModelObject;
+    SharedPreferences.Editor editor;
+
+
+//    public static class LoginFragment extends Fragment {
+//
+//    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -50,9 +59,9 @@ public class LoginActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+
         setContentView(R.layout.activity_login);
 
-        final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_logged_in);
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -72,9 +81,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
 
-                if (loginFormState.getUsernameError() != null) {
-                    usernameEditText.setError(getString(loginFormState.getUsernameError()));
-                }
+//                if (loginFormState.getUsernameError() != null) {
+//                    usernameEditText.setError(getString(loginFormState.getUsernameError()));
+//                }
 //                if (loginFormState.getPasswordError() != null) {
 //                    passwordEditText.setError(getString(loginFormState.getPasswordError()));
 //                }
@@ -100,6 +109,15 @@ public class LoginActivity extends AppCompatActivity {
 //                finish();
 //            }
 //        });
+
+        editor =  getSharedPreferences("LoginAct", MODE_PRIVATE).edit();
+//        FragmentManager fm = getSupportFragmentManager();
+//        fm.beginTransaction().add(new LoginFragment(), "frag");
+//
+//
+//        Log.v("fragmgr", Boolean.toString(fm != null));
+//        Log.v("frag", Boolean.toString(fm.findFragmentByTag("frag") != null));
+
 
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
@@ -154,6 +172,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 userEmail = usernameEditText.getText().toString();
 
+                editor.putString("userEmail", userEmail);
+                editor.apply();
+
                 FirebaseAuth auth = FirebaseAuth.getInstance();
 
                 Log.v("!!!", "trying to send email");
@@ -184,49 +205,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        Intent intent = getIntent();
 
-        if (intent.getData() != null) {
-            String emailLink = intent.getData().toString();
-            Log.v("link: ", emailLink);
-            Log.v("emailvalidate: ", Boolean.toString(auth.isSignInWithEmailLink(emailLink)));
-
-
-
-            if (auth.isSignInWithEmailLink(emailLink)) {
-                Log.v("email: ", Boolean.toString(this.userEmail == null));
-
-                if (savedInstanceState != null) {
-                    Log.v("!!!", "IHATETHIS!!!!!");
-//                    this.userEmail = (String) savedInstanceState.getCharSequence("userEmail");
-
-
-                    // The client SDK will parse the code from the link for you.
-                    auth.signInWithEmailLink(userEmail, emailLink)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getApplicationContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show();
-
-                                        AuthResult result = task.getResult();
-                                        // You can access the new user via result.getUser()
-                                        // Additional user info profile *not* available via:
-                                        // result.getAdditionalUserInfo().getProfile() == null
-                                        // You can check if the user is new or existing:
-                                        // result.getAdditionalUserInfo().isNewUser()
-                                        NavHostFragment.findNavController(frag)
-                                                .navigate(R.id.action_nav_host_fragment_to_fragment_logged_in);
-
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "Error logging in :( !", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }
-            }
-        }
 
 
 
@@ -248,7 +227,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Log.v("ORS", "ORS CALLED!");
-        this.userEmail = (String)savedInstanceState.getCharSequence("userEmail");
+//        this.userEmail = (String)savedInstanceState.getCharSequence("userEmail");
         Log.v("restored email", this.userEmail);
 
 
@@ -273,8 +252,77 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+
+        Log.v("name", Boolean.toString(userEmail != null));
+        Log.v("usrobj", Boolean.toString(userModelObject != null));
+
+        if(userModelObject != null) {
+            Log.v("email from User obj", userModelObject.getEmail());
+        }
+        final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_logged_in);
+
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        Intent intent = getIntent();
+
+        if (intent.getData() != null) {
+
+            SharedPreferences prefs = getSharedPreferences("LoginAct", MODE_PRIVATE);
+            userEmail = prefs.getString("userEmail", null);
+
+            String emailLink = intent.getData().toString();
+            Log.v("link: ", emailLink);
+//            Log.v("userEmail: ", userEmail);
+
+
+
+            if (auth.isSignInWithEmailLink(emailLink)) {
+                Log.v("email268: ", this.userEmail);
+
+//                if (savedInstanceState != null) {
+//                    Log.v("!!!", "IHATETHIS!!!!!");
+//                    this.userEmail = (String) savedInstanceState.getCharSequence("userEmail");
+
+
+                    // The client SDK will parse the code from the link for you.
+                    auth.signInWithEmailLink(userEmail, emailLink)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getApplicationContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show();
+
+                                        AuthResult result = task.getResult();
+                                        // You can access the new user via result.getUser()
+                                        // Additional user info profile *not* available via:
+                                        // result.getAdditionalUserInfo().getProfile() == null
+                                        // You can check if the user is new or existing:
+                                        // result.getAdditionalUserInfo().isNewUser()
+//                                        final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_logged_in);
+//
+//                                        NavHostFragment.findNavController(frag)
+//                                                .navigate(R.id.action_nav_host_fragment_to_fragment_logged_in);
+
+                                        Intent i = new Intent(LoginActivity.this, LoggedInActivity.class);
+                                        startActivity(i);
+
+                                    } else {
+                                        task.getException().printStackTrace();
+                                        Toast.makeText(getApplicationContext(), "Error logging in :( !", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+            }
+        }
+
+
+
         Log.v("resume", "resume CALLED!");
         Log.v("email: ", Boolean.toString(this.userEmail == null));
+
+
+
 
     }
 
