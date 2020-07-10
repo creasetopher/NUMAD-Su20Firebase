@@ -201,7 +201,7 @@ public class LoggedInActivity extends AppCompatActivity {
 
 
     private void getChats(String userEmail) {
-       Query q = db.collection("chats").whereEqualTo("recipient", userEmail);
+       Query q = db.collection("chats").whereEqualTo("recipient", "chris.sims510@gmail.com");
        q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                          @Override
                                          public void onComplete(@NonNull Task<QuerySnapshot> task) {

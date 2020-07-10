@@ -136,46 +136,77 @@ public class LoginActivity extends AppCompatActivity {
 
                 userEmail = usernameEditText.getText().toString();
 
-                editor.putString("userEmail", userEmail);
-                editor.apply();
+                if (!userEmail.contains("@")) {
+                    userEmail = userEmail.concat("@emojo.com");
+                }
 
-                FirebaseAuth auth = FirebaseAuth.getInstance();
 
                 Log.v("!!!", "trying to send email");
 
+                String dummyPassword = "password1234";
 
-                auth.sendSignInLinkToEmail(userEmail,
-                        actionCodeSettings)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Log.v("useremail", userEmail);
-
-                                    if (!task.isSuccessful()) {
-                                        task.getException().printStackTrace();
-                                    }
-
-
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getApplicationContext(), "Email sent.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-
+                signInOrSignUp(userEmail, dummyPassword);
 
 //                loginViewModel.login(usernameEditText.getText().toString(),
 //                        passwordEditText.getText().toString());
             }
         });
 
+    }
+
+    private void signUp(String userEmail, String dummyPassword) {
+
+        firebaseAuth.createUserWithEmailAndPassword(userEmail, dummyPassword)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // sign in success
+                            isLoggedIn = true;
+                        } else {
+                            task.getException().printStackTrace();
+                        }
+
+                    }
+                });
+
+    }
+
+    private void signInOrSignUp(final String userEmail, final String dummyPassword) {
+        firebaseAuth.signInWithEmailAndPassword(userEmail, dummyPassword)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                            isLoggedIn = true;
+                        }
+
+                        else {
+                            signUp(userEmail, dummyPassword);
+                        }
+
+                        if (isLoggedIn) {
+                            Toast.makeText(getApplicationContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show();
+
+
+                            User user = new User(userEmail);
+
+                            Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
+                            intent.putExtra("userEmail", user.getEmail());
+
+                            startActivity(intent);
+
+
+                        }
 
 
 
-
-
-
-
-
+                        // ...
+                    }
+                });
     }
 
     @Override
