@@ -24,6 +24,16 @@
         android:name="com.example.emojo.ui.login.LoggedInFragment"
         android:label="logged in label"
         tools:layout="@layout/fragment_logged_in">
+        <action
+            android:id="@+id/action_fragment_logged_in_to_fragment_new_chat"
+            app:destination="@id/fragment_new_chat" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_new_chat"
+        android:name="com.example.emojo.ui.login.FragmentNewChat"
+        android:label="new chat"
+        tools:layout="@layout/fragment_new_chat">
     </fragment>
 
 

@@ -17,11 +17,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.emojo.R;
 import com.example.emojo.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,6 +43,8 @@ public class LoggedInActivity extends AppCompatActivity {
     ArrayAdapter<String> listAdapter;
     ListView listView;
     Button logButton;
+    FloatingActionButton newChatButton;
+    String passedUsername;
     List<ChatListObject> allChats = new ArrayList();
     List<ChatListObject> topChats = new ArrayList<>();
     Map<String, Map<String, ChatListObject>> chatsGroupedBySender = new HashMap<>();
@@ -46,6 +52,8 @@ public class LoggedInActivity extends AppCompatActivity {
 
     FirebaseUser currentUser;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +63,8 @@ public class LoggedInActivity extends AppCompatActivity {
 //        h.put("message", "!!!");
 //        h.put("time", "7:00pm");
 //        topChats.add(new ChatListObject(h));
+
+        passedUsername = getIntent().getStringExtra("username");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_logged_in);
@@ -69,6 +79,35 @@ public class LoggedInActivity extends AppCompatActivity {
                 topChats);
 
         listView = findViewById(R.id.listViewForUsers);
+
+        newChatButton = (FloatingActionButton)findViewById(R.id.floatingButton);
+
+        newChatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle argBundle = new Bundle();
+                argBundle.putString("sender", passedUsername);
+
+                Fragment loggedInFragment = new LoggedInFragment();
+                getSupportFragmentManager().beginTransaction().add(loggedInFragment, "loggedInFragment");
+                Fragment fragmentNewChat = new FragmentNewChat();
+
+                fragmentNewChat.setArguments(argBundle);
+
+//                Intent intent = new Intent(LoggedInActivity.this, fragmentNewChat.getClass());
+//
+//                startActivity(intent);
+//                getSupportFragmentManager().beginTransaction()
+//                        .add(R.id.container, new Fragment(),"MyFragment").commit();
+//                Fragment frag = ((Fragment) getSupportFragmentManager().findFragmentByTag("MyFragment"));
+
+//                NavHostFragment.findNavController(loggedInFragment).navigate(R.id.action_fragment_logged_in_to_fragment_new_chat);
+
+                NavController navController = Navigation.findNavController(findViewById(android.R.id.content));
+                navController.navigate(R.id.action_fragment_logged_in_to_fragment_new_chat);
+            }
+        });
+
 
         listView.setAdapter(listAdapter);
 
@@ -104,7 +143,7 @@ public class LoggedInActivity extends AppCompatActivity {
 
         });
 
-        logButton = findViewById(R.id.chat_button);
+        logButton = findViewById(R.id.log_chat_button);
         logButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

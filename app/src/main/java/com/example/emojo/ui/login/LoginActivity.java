@@ -35,11 +35,17 @@ import com.example.emojo.data.model.User;
 import com.example.emojo.ui.login.LoginViewModel;
 import com.example.emojo.ui.login.LoginViewModelFactory;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -47,10 +53,13 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private ActionCodeSettings actionCodeSettings;
     private String userEmail;
+    private String username;
     private User userModelObject;
     SharedPreferences.Editor editor;
     private FirebaseAuth firebaseAuth;
     private Boolean isLoggedIn = false;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
 
 
@@ -137,7 +146,12 @@ public class LoginActivity extends AppCompatActivity {
                 userEmail = usernameEditText.getText().toString();
 
                 if (!userEmail.contains("@")) {
+                    username = userEmail;
                     userEmail = userEmail.concat("@emojo.com");
+                }
+
+                else {
+                    username = userEmail.substring(0, userEmail.indexOf('@'));
                 }
 
 
@@ -192,10 +206,11 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show();
 
 
-                            User user = new User(userEmail);
+                            User user = new User(username, userEmail);
+                            addUserToDatabase(user);
 
                             Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
-                            intent.putExtra("userEmail", user.getEmail());
+                            intent.putExtra("username", user.getUsername());
 
                             startActivity(intent);
 
@@ -218,15 +233,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.v("ORS", "ORS CALLED!");
-//        this.userEmail = (String)savedInstanceState.getCharSequence("userEmail");
-        Log.v("restored email", this.userEmail);
-
-
-    }
+//    @Override
+//    public void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        Log.v("ORS", "ORS CALLED!");
+////        this.userEmail = (String)savedInstanceState.getCharSequence("userEmail");
+//        Log.v("restored email", this.userEmail);
+//
+//
+//    }
 
     @Override
     public void onStart() {
@@ -289,38 +304,58 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                    auth.signInWithEmailLink(userEmail, emailLink)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getApplicationContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show();
-
-                                        AuthResult result = task.getResult();
-
-                                        User user = new User(userEmail);
-
-                                        Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
-                                        intent.putExtra("authResult", result);
-                                        intent.putExtra("userEmail", user.getEmail());
-
-                                        startActivity(intent);
-
-                                    } else {
-                                        task.getException().printStackTrace();
-                                        Toast.makeText(getApplicationContext(), "Error logging in :( !", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+//                    auth.signInWithEmailLink(userEmail, emailLink)
+//                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<AuthResult> task) {
+//                                    if (task.isSuccessful()) {
+//                                        Toast.makeText(getApplicationContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show();
+//
+//                                        AuthResult result = task.getResult();
+//
+//                                        User user = new User(userEmail);
+//
+//                                        Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
+//                                        intent.putExtra("authResult", result);
+//                                        intent.putExtra("userEmail", user.getEmail());
+//
+//                                        startActivity(intent);
+//
+//                                    } else {
+//                                        task.getException().printStackTrace();
+//                                        Toast.makeText(getApplicationContext(), "Error logging in :( !", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
 
             }
         }
 
-
-
         Log.v("resume", "resume CALLED!");
         Log.v("email: ", Boolean.toString(this.userEmail == null));
 
+    }
+
+    private void addUserToDatabase(User user) {
+
+        Map<String, Object> userMap = new HashMap<>();
+
+        userMap.put("username", user.getUsername());
+        userMap.put("email", user.getEmail());
+
+        db.collection("users").document().set(userMap).addOnSuccessListener(
+                new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("DBOps", "user successfully written to DB!");
+                    }
+                }
+        ).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("DBOps", "Error writing user to DB! :(", e);
+            }
+        });
 
 
 
