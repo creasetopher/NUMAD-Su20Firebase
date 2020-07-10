@@ -3,6 +3,7 @@ package com.example.emojo.ui.login;
 import android.app.Activity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
@@ -43,9 +44,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import io.opencensus.metrics.LongGauge;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -100,9 +106,6 @@ public class LoginActivity extends AppCompatActivity {
 
 //
 
-        editor =  getSharedPreferences("LoginAct", MODE_PRIVATE).edit();
-
-
 
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
@@ -154,18 +157,31 @@ public class LoginActivity extends AppCompatActivity {
                     username = userEmail.substring(0, userEmail.indexOf('@'));
                 }
 
-
-                Log.v("!!!", "trying to send email");
-
                 String dummyPassword = "password1234";
 
+
                 signInOrSignUp(userEmail, dummyPassword);
+
+
 
 //                loginViewModel.login(usernameEditText.getText().toString(),
 //                        passwordEditText.getText().toString());
             }
         });
 
+        Log.v("!!!!logged", Boolean.toString(isLoggedIn));
+
+        if (isLoggedIn) {
+            startLoginFlow();
+        }
+
+
+    }
+
+    private void startLoginFlow() {
+        Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
+        intent.putExtra("username", firebaseAuth.getCurrentUser().getEmail());
+        startActivity(intent);
     }
 
     private void signUp(String userEmail, String dummyPassword) {
@@ -177,6 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // sign in success
                             isLoggedIn = true;
+                            startLoginFlow();
                         } else {
                             task.getException().printStackTrace();
                         }
@@ -187,41 +204,36 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signInOrSignUp(final String userEmail, final String dummyPassword) {
+        final User user = new User(username, userEmail);
+
         firebaseAuth.signInWithEmailAndPassword(userEmail, dummyPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                             isLoggedIn = true;
+                            startLoginFlow();
+
                         }
 
                         else {
-                            signUp(userEmail, dummyPassword);
-                        }
-
-                        if (isLoggedIn) {
-                            Toast.makeText(getApplicationContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show();
-
-
-                            User user = new User(username, userEmail);
+                            Log.v("!!!WEGWARG", "Addind");
                             addUserToDatabase(user);
-
-                            Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
-                            intent.putExtra("username", user.getUsername());
-
-                            startActivity(intent);
-
-
+                            signUp(userEmail, dummyPassword);
+                            isLoggedIn = true;
                         }
 
 
-
-                        // ...
                     }
+//                            Toast.makeText(getApplicationContext(), "Error signing in! Please try again.", Toast.LENGTH_SHORT).show();
+//                            task.getException().printStackTrace();
+
                 });
+
     }
 
     @Override
@@ -249,6 +261,7 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if(currentUser != null) {
             isLoggedIn = true;
+            Log.v("currentuser", currentUser.getEmail());
         }
     }
 

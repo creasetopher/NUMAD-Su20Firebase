@@ -28,6 +28,11 @@
         </activity>
 
 
+        <activity
+            android:name=".ui.login.NewChatActivity"
+            android:label="new chat">
+        </activity>
+
     </application>
 
 </manifest>

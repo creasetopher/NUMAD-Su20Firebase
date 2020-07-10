@@ -13,9 +13,12 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.emojo.R;
 import com.example.emojo.data.model.User;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -23,10 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoggedInFragment extends Fragment {
-    ArrayAdapter<String> listAdapter;
-    ListView listView;
-    List<User> links = new ArrayList<>();
-    FirebaseUser currentUser;
+    FloatingActionButton newChatButton;
+
 
 
     @Override
@@ -41,26 +42,33 @@ public class LoggedInFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        Log.v("!!!", currentUser.toString());
-
-        listAdapter = new ArrayAdapter(
-                this.getContext(),
-                android.R.layout.simple_list_item_1,
-                links);
-
-        listView = (ListView)view.findViewById(R.id.listViewForUsers);
-
-        listView.setAdapter(listAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        newChatButton = (FloatingActionButton)view.findViewById(R.id.floatingButton);
+        newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User element = (User)listView.getItemAtPosition(position);
+            public void onClick(View v) {
+                Log.v("FROMFRAG", "works!");
+//                Bundle argBundle = new Bundle();
+//                argBundle.putString("sender", passedUsername);
+//
+//                Fragment loggedInFragment = new LoggedInFragment();
+//                getSupportFragmentManager().beginTransaction().add(loggedInFragment, "loggedInFragment");
+//                Fragment fragmentNewChat = new FragmentNewChat();
+//
+//                fragmentNewChat.setArguments(argBundle);
 
+//                Intent intent = new Intent(LoggedInActivity.this, fragmentNewChat.getClass());
+//
+//                startActivity(intent);
+//                getSupportFragmentManager().beginTransaction()
+//                        .add(R.id.container, new Fragment(),"MyFragment").commit();
+//                Fragment frag = ((Fragment) getSupportFragmentManager().findFragmentByTag("MyFragment"));
+
+//                NavHostFragment.findNavController(loggedInFragment).navigate(R.id.action_fragment_logged_in_to_fragment_new_chat);
+
+//                NavController navController = Navigation.findNavController(findViewById(android.R.id.content));
+//                navController.navigate(R.id.action_fragment_logged_in_to_fragment_new_chat);
             }
-        });
-
+            });
 
     }
-
 }
