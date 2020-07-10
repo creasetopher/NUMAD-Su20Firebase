@@ -20,6 +20,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Printer;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -38,6 +39,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -47,6 +49,9 @@ public class LoginActivity extends AppCompatActivity {
     private String userEmail;
     private User userModelObject;
     SharedPreferences.Editor editor;
+    private FirebaseAuth firebaseAuth;
+    private Boolean isLoggedIn = false;
+
 
 
 //    public static class LoginFragment extends Fragment {
@@ -59,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        firebaseAuth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_login);
 
@@ -189,6 +195,15 @@ public class LoginActivity extends AppCompatActivity {
         Log.v("restored email", this.userEmail);
 
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if(currentUser != null) {
+            isLoggedIn = true;
+        }
     }
 
     @Override
