@@ -19,18 +19,128 @@
         android:inputType="phone"
         android:layout_marginTop="50dp"
         android:text="Select a User to message"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:layout_width="match_parent"
         app:layout_constraintTop_toBottomOf="@id/dummy_text_view"
         />
 
     <Spinner
         android:id="@+id/username_dropdown"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:background="@android:drawable/btn_dropdown"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_input"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline"
         android:spinnerMode="dropdown"
         />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_user_view"
+        android:labelFor="@+id/message_dropdown"
+        android:layout_marginLeft="20dp"
+        android:text="sending to me"
+        android:textColor="@android:color/holo_purple"
+        style="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/username_input"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/vertical_guideline"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/horizontal_guideline"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.55"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/vertical_guideline2"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.66"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/horizontal_guideline2"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/message_dropdown_label"
+        android:labelFor="@+id/message_dropdown"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="30dp"
+        android:text="Select a Sticker to send"
+        android:textSize="20dp"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/username_dropdown"
+        app:layout_constraintBottom_toTopOf="@+id/message_dropdown"
+        />
+
+
+    <Spinner
+        android:id="@+id/message_dropdown"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:background="@android:drawable/editbox_dropdown_light_frame"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="50dp"
+        android:spinnerMode="dropdown"
+        />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_sticker_view"
+        android:labelFor="@+id/message_dropdown"
+        android:textSize="75dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline"
+        app:layout_constraintTop_toBottomOf="@id/message_dropdown_label"
+        />
+
+    <Button
+        android:id="@+id/send_chat_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Send"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_marginTop="75dp"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/message_dropdown"
+
+        />
+
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_guideline2"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintVertical_bias="0.3" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
