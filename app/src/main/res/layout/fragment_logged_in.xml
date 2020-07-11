@@ -46,14 +46,13 @@
         android:layout_marginBottom="60dp"
         app:layout_constraintStart_toStartOf="@id/log_chat_button"
         app:layout_constraintBottom_toTopOf="@+id/log_chat_button"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/sym_action_chat" />
 
-    <Button
+    <TextView
         android:id="@+id/log_chat_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="log chats"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

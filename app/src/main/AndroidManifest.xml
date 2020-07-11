@@ -33,6 +33,11 @@
             android:label="new chat">
         </activity>
 
+        <activity
+            android:name=".ui.login.ChatThreadActivity"
+            android:label="thread">
+        </activity>
+
     </application>
 
 </manifest>

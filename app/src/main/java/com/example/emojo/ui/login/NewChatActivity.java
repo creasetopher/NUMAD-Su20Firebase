@@ -103,7 +103,10 @@ private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+//                UserListObject userObj = (UserListObject)userDropdown.getItemAtPosition(0);
+//                selectedUser = userObj.toString();
+//                TextView selectedStickerView = findViewById(R.id.selected_user_view);
+//                selectedStickerView.setText(String.format("Sending to %s", selectedUser));
             }
         });
 
@@ -121,7 +124,9 @@ private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+//                selectedSticker = (String)messageDropdown.getItemAtPosition(0);
+//                TextView selectedStickerView =  findViewById(R.id.selected_sticker_view);
+//                selectedStickerView.setText(selectedSticker);
             }
         });
 

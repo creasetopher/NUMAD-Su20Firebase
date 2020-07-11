@@ -182,6 +182,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
         intent.putExtra("username", firebaseAuth.getCurrentUser().getEmail());
         startActivity(intent);
+        finish();
     }
 
     private void signUp(String userEmail, String dummyPassword) {

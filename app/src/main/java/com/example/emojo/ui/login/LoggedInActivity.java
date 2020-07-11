@@ -47,7 +47,6 @@ public class LoggedInActivity extends AppCompatActivity {
     ArrayAdapter<String> listAdapter;
 
     ListView listView;
-    Button logButton;
     FloatingActionButton newChatButton;
     String passedUsername;
     List<ChatListObject> allChats = new ArrayList();
@@ -162,20 +161,20 @@ public class LoggedInActivity extends AppCompatActivity {
 
                 ArrayList<CharSequence> allMessagesFromSender = new ArrayList<>();
 
+                ArrayList<String> allTimestamps = new ArrayList<>();
+
                 for (String timestamp : messageMap.keySet()) {
                     allMessagesFromSender.add(messageMap.get(timestamp).getMessage());
+                    allTimestamps.add(timestamp);
                 }
 
 
-                Bundle argBundle = new Bundle();
-                argBundle.putString("sender", sender);
-                argBundle.putCharSequenceArrayList("messages", allMessagesFromSender);
+                Intent intent = new Intent(LoggedInActivity.this, ChatThreadActivity.class);
 
-                Fragment chatThreadFragment = new FragmentChatThread();
+                intent.putExtra("sender", sender);
+                intent.putExtra("messages", allMessagesFromSender);
+                intent.putExtra("timestamps", allTimestamps);
 
-                chatThreadFragment.setArguments(argBundle);
-
-                Intent intent = new Intent(LoggedInActivity.this, chatThreadFragment.getClass());
 
                 startActivity(intent);
 
@@ -184,27 +183,26 @@ public class LoggedInActivity extends AppCompatActivity {
 
         });
 
-        logButton = findViewById(R.id.log_chat_button);
-        logButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listAdapter.notifyDataSetChanged();
-//                getChats(currentUser.getEmail());
-                for(ChatListObject o : topChats) {
-                    Log.v("chats", o.toString());
-                }
-            }
-
-        });
+//        logButton = findViewById(R.id.log_chat_button);
+//        logButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                listAdapter.notifyDataSetChanged();
+////                getChats(currentUser.getEmail());
+//                for(ChatListObject o : topChats) {
+//                    Log.v("chats", o.toString());
+//                }
+//            }
+//
+//        });
 
         getChats(currentUser.getEmail());
-
 
 
     }
 
 
-    private static class ChatListObject {
+    public static class ChatListObject {
         String sender;
         String message;
         String time;
@@ -218,7 +216,7 @@ public class LoggedInActivity extends AppCompatActivity {
 
         @Override
         public String toString() {
-            return this.sender + "     " + this.time;
+            return String.format("%s     %s     |     %s", this.sender, this.time, this.message);
         }
 
         public String getMessage() {
@@ -279,9 +277,13 @@ public class LoggedInActivity extends AppCompatActivity {
     }
 
 
-
     private void getChats(String userEmail) {
-       Query q = db.collection("chats").whereEqualTo("recipient", "chris.sims510@gmail.com");
+
+       Query q = db.collection("chats")
+               .whereEqualTo(
+                       "recipient",
+                       userEmail.substring(0, userEmail.indexOf('@')));
+
        q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                          @Override
                                          public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -302,6 +304,7 @@ public class LoggedInActivity extends AppCompatActivity {
                                                  topChats.addAll(ChatListObject
                                                          .getTopChats(chatsGroupedBySender)
                                                  );
+
 
                                                  listAdapter.notifyDataSetChanged();
                                              }
@@ -338,7 +341,6 @@ public class LoggedInActivity extends AppCompatActivity {
 //            newChatButton.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
-                    Log.v("FROMFRAG", "works!");
 //                Bundle argBundle = new Bundle();
 //                argBundle.putString("sender", passedUsername);
 //
